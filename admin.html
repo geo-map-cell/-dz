@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>لوحة الإدارة — بلدية الثنية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{--nv:#0a1628;--nv2:#0f2040;--nv3:#152850;--nv4:#1c3260;--ac:#3b82f6;--ac2:#2563eb;--gr:#10b981;--rd:#ef4444;--am:#f59e0b;--pu:#8b5cf6;--t1:#f1f5f9;--t2:#94a3b8;--t3:#475569;--br:rgba(255,255,255,.07);--br2:rgba(255,255,255,.12);--sh:0 4px 24px rgba(0,0,0,.4);--f:'Cairo',sans-serif;--sw:272px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--nv);font-family:var(--f);color:var(--t1);overflow:hidden}
+#lo{position:fixed;inset:0;background:linear-gradient(135deg,var(--nv),#0d1f3c);display:flex;align-items:center;justify-content:center;z-index:9999}
+.lc{background:var(--nv2);border:1px solid var(--br2);border-radius:22px;padding:44px 38px;width:380px;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.6)}
+.li{width:68px;height:68px;background:linear-gradient(135deg,var(--ac),var(--pu));border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;box-shadow:0 8px 32px rgba(59,130,246,.35)}
+.li svg{width:36px;height:36px;color:#fff}
+.lf{width:100%;background:var(--nv);border:1px solid var(--br2);color:var(--t1);padding:12px 15px;border-radius:11px;font-family:var(--f);font-size:13px;outline:none;margin-bottom:10px;transition:border-color .2s;text-align:center}
+.lf:focus{border-color:var(--ac)}
+.lf::placeholder{color:var(--t3)}
+.lb{width:100%;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border:none;padding:13px;border-radius:11px;font-family:var(--f);font-size:15px;font-weight:700;cursor:pointer;margin-top:3px;box-shadow:0 6px 20px rgba(59,130,246,.35);transition:all .2s}
+.lb:hover{transform:translateY(-1px)}
+.le{color:var(--rd);font-size:11px;margin-top:8px;min-height:15px}
+#app{display:none;height:100vh;flex-direction:column}
+#app.on{display:flex}
+.ah{height:56px;background:var(--nv2);border-bottom:1px solid var(--br);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;z-index:100}
+.ai{width:34px;height:34px;background:linear-gradient(135deg,var(--ac),var(--pu));border-radius:9px;display:flex;align-items:center;justify-content:center}
+.ai svg{width:18px;height:18px;color:#fff}
+.ar{margin-left:auto;display:flex;align-items:center;gap:9px}
+.bsm{background:transparent;border:1px solid var(--br);color:var(--t3);padding:5px 12px;border-radius:7px;font-family:var(--f);font-size:11px;cursor:pointer;transition:all .2s}
+.bsm:hover{border-color:var(--rd);color:var(--rd)}
+.brfr{background:var(--nv3);border:1px solid var(--br);color:var(--t2);padding:5px 12px;border-radius:7px;font-family:var(--f);font-size:11px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px}
+.brfr:hover{background:var(--nv4);color:var(--t1)}
+.nb{position:relative;width:34px;height:34px;background:var(--nv3);border:1px solid var(--br);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.nb svg{width:16px;height:16px;color:var(--t2)}
+.nbdg{position:absolute;top:-4px;right:-4px;width:16px;height:16px;background:var(--rd);border-radius:50%;font-size:8px;font-weight:700;display:none;align-items:center;justify-content:center;border:2px solid var(--nv2)}
+.nbdg.sh{display:flex}
+.bdy{display:flex;flex:1;overflow:hidden}
+.sb{width:var(--sw);background:var(--nv2);border-left:1px solid var(--br);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sb::-webkit-scrollbar{width:3px}
+.sb::-webkit-scrollbar-thumb{background:var(--nv4);border-radius:2px}
+.sm{padding:12px}
+.smi{background:var(--nv3);border:1px solid var(--br);border-radius:10px;padding:11px;margin-bottom:7px;display:flex;align-items:center;gap:10px}
+.smi-ic{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.smi-v{font-size:20px;font-weight:800;line-height:1}
+.smi-l{font-size:10px;color:var(--t2);margin-top:1px}
+.sf{padding:0 12px 10px}
+.sft{font-size:9px;color:var(--t3);letter-spacing:2px;text-transform:uppercase;margin-bottom:7px}
+.fb2{width:100%;background:transparent;border:1px solid var(--br);color:var(--t2);padding:8px 12px;border-radius:8px;font-family:var(--f);font-size:12px;cursor:pointer;transition:all .18s;text-align:right;margin-bottom:3px;display:flex;align-items:center;gap:7px}
+.fb2:hover{background:var(--nv3);color:var(--t1)}
+.fb2.on{background:rgba(59,130,246,.13);border-color:rgba(59,130,246,.35);color:var(--ac)}
+.fdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-left:auto}
+.rp{flex:1;display:flex;flex-direction:column;overflow:hidden;border-left:1px solid var(--br)}
+.rph{padding:12px 17px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:10px;flex-shrink:0;background:var(--nv2)}
+.rpht{font-size:14px;font-weight:700;flex:1}
+.si{background:var(--nv3);border:1px solid var(--br);color:var(--t1);padding:7px 12px;border-radius:8px;font-family:var(--f);font-size:12px;outline:none;width:180px;transition:border-color .2s;text-align:right}
+.si:focus{border-color:var(--ac)}
+.si::placeholder{color:var(--t3)}
+.rl{flex:1;overflow-y:auto;padding:10px}
+.rl::-webkit-scrollbar{width:3px}
+.rl::-webkit-scrollbar-thumb{background:var(--nv4);border-radius:2px}
+.rc{background:var(--nv2);border:1px solid var(--br);border-radius:12px;padding:12px 14px;margin-bottom:7px;cursor:pointer;transition:all .18s;position:relative}
+.rc:hover{background:var(--nv3);border-color:var(--br2);transform:translateX(-2px)}
+.rc.sel{border-color:var(--ac);background:rgba(59,130,246,.07)}
+.rct{display:flex;align-items:flex-start;gap:9px;margin-bottom:7px}
+.rcid{font-size:9px;color:var(--t3);font-weight:600;letter-spacing:1px}
+.rccat{font-size:13px;font-weight:700}
+.rctm{font-size:10px;color:var(--t3);margin-top:1px}
+.rcdsc{font-size:11px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}
+.sp2{padding:3px 9px;border-radius:100px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.p-p{background:rgba(245,158,11,.14);color:var(--am);border:1px solid rgba(245,158,11,.28)}
+.p-r{background:rgba(139,92,246,.13);color:var(--pu);border:1px solid rgba(139,92,246,.27)}
+.p-pr{background:rgba(59,130,246,.13);color:var(--ac);border:1px solid rgba(59,130,246,.27)}
+.p-re{background:rgba(16,185,129,.13);color:var(--gr);border:1px solid rgba(16,185,129,.27)}
+.nd{position:absolute;top:12px;left:12px;width:6px;height:6px;border-radius:50%;background:var(--rd);box-shadow:0 0 5px var(--rd)}
+.el{text-align:center;padding:40px 16px;color:var(--t3);font-size:13px;line-height:1.8}
+.dp{width:380px;flex-shrink:0;background:var(--nv2);border-left:1px solid var(--br);display:flex;flex-direction:column;overflow:hidden}
+.dpl{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;color:var(--t3);text-align:center;padding:36px}
+.dpl svg{width:44px;height:44px;margin-bottom:14px;opacity:.28}
+.dc{display:none;flex-direction:column;flex:1;overflow:hidden}
+.dc.on{display:flex}
+.dh{padding:14px 18px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:11px;flex-shrink:0}
+.ds{flex:1;overflow-y:auto;padding:14px}
+.ds::-webkit-scrollbar{width:3px}
+.ds::-webkit-scrollbar-thumb{background:var(--nv4);border-radius:2px}
+.dst{font-size:9px;color:var(--t3);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.ig{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ic{background:var(--nv3);border:1px solid var(--br);border-radius:9px;padding:9px 11px}
+.icl{font-size:8px;color:var(--t3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px}
+.icv{font-size:12px;font-weight:600}
+#dm{height:190px;border-radius:10px;overflow:hidden;border:1px solid var(--br)}
+.mcd{font-size:10px;color:var(--t2);margin-top:7px;padding:8px 10px;background:var(--nv3);border-radius:7px;line-height:1.7}
+.mcd a{color:var(--ac);text-decoration:none}
+.dimg{width:100%;border-radius:10px;overflow:hidden;border:1px solid var(--br)}
+.dimg img{width:100%;max-height:190px;object-fit:cover;display:block}
+.nim{padding:18px;text-align:center;color:var(--t3);font-size:11px;background:var(--nv3);border-radius:9px}
+.dcmt{background:var(--nv3);border:1px solid var(--br);border-radius:9px;padding:10px 12px;font-size:12px;color:var(--t2);line-height:1.7;min-height:42px}
+.ss2{width:100%;background:var(--nv3);border:1px solid var(--br2);color:var(--t1);padding:11px 12px;border-radius:9px;font-family:var(--f);font-size:13px;font-weight:600;outline:none;cursor:pointer;transition:border-color .2s}
+.ss2:focus{border-color:var(--ac)}
+.rta{width:100%;background:var(--nv3);border:1px solid var(--br);color:var(--t1);padding:11px 12px;border-radius:9px;font-family:var(--f);font-size:12px;outline:none;resize:none;height:82px;line-height:1.6;transition:border-color .2s;margin-bottom:9px}
+.rta:focus{border-color:var(--ac)}
+.rta::placeholder{color:var(--t3)}
+.bsv{width:100%;background:linear-gradient(135deg,var(--gr),#059669);color:#fff;border:none;padding:12px;border-radius:9px;font-family:var(--f);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px}
+.bsv:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(16,185,129,.32)}
+.bsv:disabled{background:#374151;cursor:not-allowed;transform:none;box-shadow:none}
+.bsv svg{width:15px;height:15px}
+.bdl{width:100%;background:transparent;border:1px solid rgba(239,68,68,.28);color:var(--rd);padding:10px;border-radius:9px;font-family:var(--f);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:7px}
+.bdl:hover{background:rgba(239,68,68,.09)}
+.pr{background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.18);border-radius:9px;padding:9px 12px;font-size:11px;color:var(--gr);margin-bottom:9px;line-height:1.6;display:none}
+.pr.sh{display:block}
+.pr::before{content:'الرد الحالي: ';font-weight:700;color:var(--gr)}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(50px);background:var(--nv);color:var(--t1);padding:10px 20px;border-radius:100px;font-size:12px;font-weight:600;z-index:9999;pointer-events:none;opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);border:1px solid var(--br2);box-shadow:var(--sh)}
+#toast.sh{transform:translateX(-50%) translateY(0);opacity:1}
+#toast.ok{border-color:rgba(16,185,129,.38);color:var(--gr)}
+#toast.er{border-color:rgba(239,68,68,.38);color:var(--rd)}
+.leaflet-container{background:#0d1b2a}
+.leaflet-popup-content-wrapper{background:var(--nv2);color:var(--t1);border:1px solid var(--br2);border-radius:9px;box-shadow:var(--sh)}
+.leaflet-popup-tip{background:var(--nv2)}
+.leaflet-popup-content{margin:9px 12px;font-family:var(--f);font-size:12px}
+.leaflet-bar a{background:var(--nv2)!important;border-color:var(--br)!important;color:var(--t2)!important}
+.leaflet-bar a:hover{background:var(--nv3)!important;color:var(--ac)!important}
+.leaflet-control-attribution{background:rgba(10,22,40,.9)!important;color:var(--t3)!important;font-size:8px!important}
+@keyframes rot{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div id="lo">
+  <div class="lc">
+    <div class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+    <div style="font-size:20px;font-weight:800;margin-bottom:5px">لوحة إدارة البلدية</div>
+    <div style="font-size:12px;color:var(--t2);margin-bottom:28px;line-height:1.6">بلدية الثنية — ولاية بومرداس</div>
+    <input class="lf" id="lu" type="text" placeholder="اسم المستخدم" onkeydown="if(event.key==='Enter')login()"/>
+    <input class="lf" id="lp" type="password" placeholder="كلمة المرور" onkeydown="if(event.key==='Enter')login()"/>
+    <button class="lb" onclick="login()">دخول</button>
+    <div class="le" id="le"></div>
+    <div style="font-size:10px;color:var(--t3);margin-top:14px">admin / admin123</div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="ah">
+    <div class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+    <div><div style="font-size:15px;font-weight:800">لوحة الإدارة</div><div style="font-size:10px;color:var(--t2)">بلدية الثنية — بومرداس</div></div>
+    <div class="ar">
+      <button class="brfr" onclick="loadReps()">↺ تحديث</button>
+      <div class="nb" id="nb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="nbdg" id="nbdg">0</div></div>
+      <button class="bsm" onclick="logout()">خروج</button>
+    </div>
+  </div>
+  <div class="bdy">
+    <div class="sb">
+      <div class="sm">
+        <div class="smi"><div class="smi-ic" style="background:rgba(245,158,11,.14)">📋</div><div><div class="smi-v" id="st" style="color:var(--am)">0</div><div class="smi-l">إجمالي البلاغات</div></div></div>
+        <div class="smi"><div class="smi-ic" style="background:rgba(239,68,68,.1)">🔴</div><div><div class="smi-v" id="sn" style="color:var(--rd)">0</div><div class="smi-l">بلاغات جديدة</div></div></div>
+        <div class="smi"><div class="smi-ic" style="background:rgba(59,130,246,.1)">⚙️</div><div><div class="smi-v" id="sp" style="color:var(--ac)">0</div><div class="smi-l">قيد المعالجة</div></div></div>
+        <div class="smi"><div class="smi-ic" style="background:rgba(16,185,129,.1)">✅</div><div><div class="smi-v" id="sg" style="color:var(--gr)">0</div><div class="smi-l">تم الإصلاح</div></div></div>
+      </div>
+      <div class="sf">
+        <div class="sft">تصفية</div>
+        <button class="fb2 on" data-f="all" onclick="setF('all',this)">📋 جميع البلاغات<div class="fdot" style="background:var(--t3)"></div></button>
+        <button class="fb2" data-f="pending" onclick="setF('pending',this)">🔴 في الانتظار<div class="fdot" style="background:var(--am)"></div></button>
+        <button class="fb2" data-f="reviewing" onclick="setF('reviewing',this)">🟣 قيد الدراسة<div class="fdot" style="background:var(--pu)"></div></button>
+        <button class="fb2" data-f="processing" onclick="setF('processing',this)">🔵 جاري المعالجة<div class="fdot" style="background:var(--ac)"></div></button>
+        <button class="fb2" data-f="resolved" onclick="setF('resolved',this)">🟢 تم الإصلاح<div class="fdot" style="background:var(--gr)"></div></button>
+        <div class="sft" style="margin-top:12px">حسب النوع</div>
+        <button class="fb2" data-f="cat-road" onclick="setF('cat-road',this)">🕳️ حفر وطرق</button>
+        <button class="fb2" data-f="cat-lighting" onclick="setF('cat-lighting',this)">💡 إنارة عامة</button>
+        <button class="fb2" data-f="cat-waste" onclick="setF('cat-waste',this)">🗑️ نفايات</button>
+        <button class="fb2" data-f="cat-water" onclick="setF('cat-water',this)">💧 تسريب مياه</button>
+        <button class="fb2" data-f="cat-sewer" onclick="setF('cat-sewer',this)">🚧 صرف صحي</button>
+      </div>
+    </div>
+
+    <div class="rp">
+      <div class="rph">
+        <div class="rpht" id="rpht">جميع البلاغات</div>
+        <input class="si" id="si" placeholder="بحث بالرقم أو النوع…" oninput="renderList()"/>
+      </div>
+      <div class="rl" id="rl"><div class="el">جاري التحميل…</div></div>
+    </div>
+
+    <div class="dp">
+      <div class="dpl" id="dpl">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <p style="font-size:13px;line-height:1.7">اختر بلاغاً لعرض تفاصيله</p>
+      </div>
+      <div class="dc" id="dc">
+        <div class="dh">
+          <div style="font-size:26px;line-height:1" id="dico">—</div>
+          <div style="flex:1"><div style="font-size:9px;color:var(--t3);font-weight:600;letter-spacing:1px" id="did">—</div><div style="font-size:15px;font-weight:800" id="dcat">—</div></div>
+          <div id="dpill"></div>
+        </div>
+        <div class="ds">
+          <div style="margin-bottom:18px">
+            <div class="dst">معلومات البلاغ</div>
+            <div class="ig">
+              <div class="ic"><div class="icl">التاريخ</div><div class="icv" id="ddt">—</div></div>
+              <div class="ic"><div class="icl">الوقت</div><div class="icv" id="dtm">—</div></div>
+              <div class="ic"><div class="icl">الهاتف</div><div class="icv" id="dph">—</div></div>
+              <div class="ic"><div class="icl">المصدر</div><div class="icv" id="dsc">—</div></div>
+            </div>
+          </div>
+          <div style="margin-bottom:18px">
+            <div class="dst">الموقع الجغرافي الدقيق</div>
+            <div id="dm"></div>
+            <div class="mcd" id="dco">—</div>
+          </div>
+          <div style="margin-bottom:18px">
+            <div class="dst">صورة البلاغ</div>
+            <div id="dimw">—</div>
+          </div>
+          <div style="margin-bottom:18px">
+            <div class="dst">وصف المواطن</div>
+            <div class="dcmt" id="dcmt">—</div>
+          </div>
+          <div style="margin-bottom:18px">
+            <div class="dst">تحديث الحالة</div>
+            <select class="ss2" id="dss">
+              <option value="pending">🔴 في انتظار المراجعة</option>
+              <option value="reviewing">🟣 قيد الدراسة</option>
+              <option value="processing">🔵 جاري المعالجة</option>
+              <option value="resolved">✅ تم الإصلاح</option>
+            </select>
+          </div>
+          <div style="margin-bottom:14px">
+            <div class="dst">رد الإدارة للمواطن</div>
+            <div class="pr" id="pr"></div>
+            <textarea class="rta" id="rta" placeholder="اكتب رداً يظهر للمواطن عند تتبع بلاغه…"></textarea>
+            <button class="bsv" id="bsv" onclick="saveChg()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              حفظ التغييرات
+            </button>
+            <button class="bdl" onclick="delRep()">🗑️ حذف البلاغ</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+const SB='https://bwaublcpiqtdggnzwbgj.supabase.co';
+const SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3YXVibGNwaXF0ZGdnbnp3YmdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5Mjk1MzcsImV4cCI6MjA5MTUwNTUzN30.ha6KdvlmRwQ4Iw59BE2ioa23ATaCQ-dQ5vK7VvWgCT8';
+const SH={'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':'application/json'};
+
+async function sbAll(f){
+  let url=SB+'/rest/v1/reports?select=*&order=created_at.desc';
+  if(f&&f!=='all'&&!f.startsWith('cat-'))url+='&status=eq.'+f;
+  if(f&&f.startsWith('cat-'))url+='&category=eq.'+f.replace('cat-','');
+  const r=await fetch(url,{headers:{'apikey':SK,'Authorization':'Bearer '+SK}});
+  if(!r.ok)throw new Error();return await r.json();
+}
+async function sbUpd(id,data){
+  const r=await fetch(SB+'/rest/v1/reports?id=eq.'+encodeURIComponent(id),{method:'PATCH',headers:{...SH,'Prefer':'return=minimal'},body:JSON.stringify(data)});
+  if(!r.ok)throw new Error(await r.text());
+}
+async function sbDel(id){
+  const r=await fetch(SB+'/rest/v1/reports?id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:{...SH,'Prefer':'return=minimal'}});
+  if(!r.ok)throw new Error();
+}
+
+const SMP={pending:{l:'في الانتظار',c:'p-p'},reviewing:{l:'قيد الدراسة',c:'p-r'},processing:{l:'جاري المعالجة',c:'p-pr'},resolved:{l:'تم الإصلاح',c:'p-re'}};
+let flt='all',selId=null,dmap=null,dpin=null,allData=[];
+
+function login(){
+  const u=document.getElementById('lu').value.trim(),p=document.getElementById('lp').value;
+  if(u==='admin'&&p==='admin123'){document.getElementById('lo').style.display='none';document.getElementById('app').classList.add('on');loadReps();setInterval(loadReps,20000);}
+  else{document.getElementById('le').textContent='بيانات الدخول غير صحيحة.';}
+}
+document.getElementById('lp').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
+document.getElementById('lu').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
+
+function logout(){document.getElementById('app').classList.remove('on');document.getElementById('lo').style.display='flex';document.getElementById('lu').value='';document.getElementById('lp').value='';document.getElementById('le').textContent='';}
+
+async function loadReps(){
+  try{
+    allData=await sbAll('all');
+    updateStats(allData);
+    renderList();
+    const nw=allData.filter(r=>r.status==='pending').length;
+    const bdg=document.getElementById('nbdg');
+    bdg.textContent=nw;
+    bdg.classList.toggle('sh',nw>0);
+  }catch(e){toast('تعذّر تحميل البيانات','er');}
+}
+
+function updateStats(d){
+  document.getElementById('st').textContent=d.length;
+  document.getElementById('sn').textContent=d.filter(r=>r.status==='pending').length;
+  document.getElementById('sp').textContent=d.filter(r=>r.status==='processing'||r.status==='reviewing').length;
+  document.getElementById('sg').textContent=d.filter(r=>r.status==='resolved').length;
+}
+
+function setF(f,btn){
+  flt=f;
+  document.querySelectorAll('.fb2').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const labels={all:'جميع البلاغات',pending:'في الانتظار',reviewing:'قيد الدراسة',processing:'جاري المعالجة',resolved:'تم الإصلاح','cat-road':'حفر وطرق','cat-lighting':'إنارة عامة','cat-waste':'نفايات','cat-water':'تسريب مياه','cat-sewer':'صرف صحي'};
+  document.getElementById('rpht').textContent=labels[f]||'بلاغات';
+  renderList();
+}
+
+function renderList(){
+  const q=document.getElementById('si').value.trim().toLowerCase();
+  let d=[...allData];
+  if(flt!=='all'&&!flt.startsWith('cat-'))d=d.filter(r=>r.status===flt);
+  if(flt.startsWith('cat-'))d=d.filter(r=>r.category===flt.replace('cat-',''));
+  if(q)d=d.filter(r=>r.id.toLowerCase().includes(q)||r.category_label.toLowerCase().includes(q)||(r.comment||'').toLowerCase().includes(q));
+  const c=document.getElementById('rl');
+  if(!d.length){c.innerHTML='<div class="el">لا توجد بلاغات تطابق البحث.</div>';return;}
+  c.innerHTML=d.map(r=>{
+    const st=SMP[r.status]||SMP.pending;
+    const ago=timeAgo(new Date(r.created_at));
+    const isNew=r.status==='pending';
+    return `<div class="rc${selId===r.id?' sel':''}" onclick="openDetail('${r.id}')">
+      ${isNew?'<div class="nd"></div>':''}
+      <div class="rct">
+        <div style="font-size:22px;line-height:1;flex-shrink:0">${r.category_icon}</div>
+        <div style="flex:1;min-width:0">
+          <div class="rcid">${r.id}</div>
+          <div class="rccat">${r.category_label}</div>
+          <div class="rctm">${ago}</div>
+        </div>
+        <span class="sp2 ${st.c}">${st.l}</span>
+      </div>
+      ${r.comment?`<div class="rcdsc">💬 ${r.comment}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function timeAgo(dt){
+  const m=Math.floor((Date.now()-dt)/60000);
+  if(m<1)return'للتو';if(m<60)return`منذ ${m} دقيقة`;
+  const h=Math.floor(m/60);if(h<24)return`منذ ${h} ساعة`;
+  return`منذ ${Math.floor(h/24)} يوم`;
+}
+
+function openDetail(id){
+  selId=id;renderList();
+  const r=allData.find(x=>x.id===id);if(!r)return;
+  document.getElementById('dpl').style.display='none';
+  document.getElementById('dc').classList.add('on');
+  document.getElementById('dico').textContent=r.category_icon;
+  document.getElementById('did').textContent=r.id;
+  document.getElementById('dcat').textContent=r.category_label;
+  const st=SMP[r.status]||SMP.pending;
+  document.getElementById('dpill').innerHTML=`<span class="sp2 ${st.c}">${st.l}</span>`;
+  const dt=new Date(r.created_at);
+  document.getElementById('ddt').textContent=dt.toLocaleDateString('ar-DZ');
+  document.getElementById('dtm').textContent=dt.toLocaleTimeString('ar-DZ');
+  document.getElementById('dph').textContent=r.phone||'—';
+  document.getElementById('dsc').textContent=r.loc_source==='gps'?'GPS':'يدوي';
+  setTimeout(()=>{
+    if(dmap){dmap.remove();dmap=null;}
+    dmap=L.map('dm',{zoomControl:true,attributionControl:false}).setView([r.lat,r.lng],17);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(dmap);
+    dpin=L.marker([r.lat,r.lng]).addTo(dmap);
+    dpin.bindPopup(`<strong>${r.category_label}</strong><br>${r.id}`).openPopup();
+  },60);
+  document.getElementById('dco').innerHTML=`📍 خط العرض: <strong>${r.lat.toFixed(6)}</strong> | خط الطول: <strong>${r.lng.toFixed(6)}</strong><br><a href="https://www.google.com/maps?q=${r.lat},${r.lng}" target="_blank">🗺️ فتح في خرائط Google</a>`;
+  document.getElementById('dimw').innerHTML=r.image?`<div class="dimg"><img src="${r.image}" alt="صورة"/></div>`:'<div class="nim">📷 لا توجد صورة</div>';
+  document.getElementById('dcmt').textContent=r.comment||'لم يضف المواطن وصفاً.';
+  document.getElementById('dss').value=r.status;
+  const pr=document.getElementById('pr');
+  if(r.admin_reply){pr.textContent=r.admin_reply;pr.classList.add('sh');document.getElementById('rta').value=r.admin_reply;}
+  else{pr.classList.remove('sh');document.getElementById('rta').value='';}
+}
+
+async function saveChg(){
+  if(!selId)return;
+  const btn=document.getElementById('bsv');
+  btn.disabled=true;btn.innerHTML='<svg style="width:15px;height:15px;animation:rot .7s linear infinite" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> جاري الحفظ…';
+  const ns=document.getElementById('dss').value;
+  const rep=document.getElementById('rta').value.trim();
+  const r=allData.find(x=>x.id===selId);
+  let hist=[];try{hist=JSON.parse(r.status_history||'[]');}catch{}
+  if(ns!==r.status)hist.push({status:ns,time:new Date().toISOString()});
+  try{
+    await sbUpd(selId,{status:ns,admin_reply:rep||null,status_history:JSON.stringify(hist),updated_at:new Date().toISOString()});
+    toast('✅ تم الحفظ بنجاح','ok');
+    await loadReps();
+    openDetail(selId);
+  }catch(e){toast('❌ فشل الحفظ','er');}
+  finally{btn.disabled=false;btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><polyline points="20 6 9 17 4 12"/></svg> حفظ التغييرات';}
+}
+
+async function delRep(){
+  if(!selId)return;
+  if(!confirm(`حذف البلاغ ${selId} نهائياً؟`))return;
+  try{
+    await sbDel(selId);
+    selId=null;
+    document.getElementById('dc').classList.remove('on');
+    document.getElementById('dpl').style.display='flex';
+    toast('🗑️ تم الحذف','ok');
+    await loadReps();
+  }catch(e){toast('❌ فشل الحذف','er');}
+}
+
+let _tt=null;
+function toast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='sh '+(type||'');clearTimeout(_tt);_tt=setTimeout(()=>{t.className='';},3000);}
+</script>
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="بلّغ"/>
+<meta name="theme-color" content="#00c896"/>
+<title>بلّغ — بلدية الثنية</title>
+<link rel="manifest" href="./manifest.json"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{--g:#00c896;--g2:#00a878;--gl:rgba(0,200,150,.16);--bg:#f0f4f2;--w:#fff;--t1:#0f1f1a;--t2:#4a6358;--t3:#8fa89d;--red:#e53935;--amb:#f59e0b;--blue:#2563eb;--brd:#d8e6e0;--sh:0 2px 14px rgba(0,80,50,.08);--f:'Cairo',sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);font-family:var(--f);color:var(--t1);overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+.sc{display:none;flex-direction:column;min-height:100vh;animation:fi .3s ease}
+.sc.on{display:flex}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+#sh{background:linear-gradient(160deg,#0a2018,#0d3326,#0a4030);align-items:center;justify-content:center;position:relative;overflow:hidden;min-height:100vh}
+.rg{position:absolute;border-radius:50%;border:1px solid rgba(0,200,150,.11);pointer-events:none}
+.r1{width:520px;height:520px;top:-170px;right:-170px}.r2{width:300px;height:300px;bottom:-90px;left:-90px}
+.hero{position:relative;z-index:1;text-align:center;padding:44px 26px;max-width:390px;width:100%}
+.bdg{display:inline-flex;align-items:center;gap:8px;background:rgba(0,200,150,.1);border:1px solid rgba(0,200,150,.2);border-radius:100px;padding:6px 16px;margin-bottom:30px}
+.bdg span{font-size:11px;color:var(--g);letter-spacing:1.5px;font-weight:600}
+.dl{width:6px;height:6px;border-radius:50%;background:var(--g);box-shadow:0 0 8px var(--g);animation:pu 2s infinite}
+@keyframes pu{0%,100%{transform:scale(1)}50%{transform:scale(1.5);opacity:.5}}
+.lb{width:80px;height:80px;background:linear-gradient(135deg,var(--g),#009670);border-radius:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 26px;box-shadow:0 10px 34px rgba(0,200,150,.36)}
+.lb svg{width:44px;height:44px}
+.ht{font-size:32px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:10px}
+.ht span{color:var(--g)}
+.hs{font-size:13px;color:rgba(255,255,255,.48);line-height:1.7;margin-bottom:38px}
+.bh{width:100%;background:linear-gradient(135deg,var(--g),var(--g2));color:#fff;border:none;padding:17px;border-radius:14px;font-family:var(--f);font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 8px 28px rgba(0,200,150,.38);transition:transform .18s}
+.bh:active{transform:scale(.97)}
+.hl{margin-top:16px;font-size:13px;color:rgba(255,255,255,.36)}
+.hl span{color:rgba(0,200,150,.75);cursor:pointer;font-weight:600}
+.tbar{background:#fff;padding:13px 17px;display:flex;align-items:center;gap:11px;border-bottom:1px solid var(--brd);position:sticky;top:0;z-index:300;box-shadow:var(--sh)}
+.bk{width:36px;height:36px;border-radius:10px;background:var(--bg);border:1px solid var(--brd);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.bk svg{width:17px;height:17px;color:var(--t2)}
+.tt{font-size:16px;font-weight:700}
+.ts{font-size:11px;color:var(--t3);margin-top:1px}
+#sr{background:var(--bg)}
+.fb{padding:16px;max-width:520px;margin:0 auto;padding-bottom:52px}
+.fs{margin-bottom:20px}
+.fl{font-size:13px;font-weight:700;margin-bottom:9px;display:flex;align-items:center;gap:6px}
+.rq{color:var(--red);font-size:11px}
+.op{color:var(--t3);font-weight:400;font-size:11px}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cc{background:#fff;border:2px solid var(--brd);border-radius:14px;padding:15px 11px;cursor:pointer;text-align:center;transition:all .17s}
+.cc:active{transform:scale(.95)}
+.cc.sl{border-color:var(--g);box-shadow:0 0 0 3px var(--gl)}
+.ci{font-size:27px;margin-bottom:6px;line-height:1}
+.cn{font-size:12px;font-weight:600}
+.cd{font-size:10px;color:var(--t3);margin-top:2px;line-height:1.4}
+.lc{background:#fff;border:2px solid var(--brd);border-radius:14px;overflow:hidden;transition:border-color .3s}
+.lc.ok{border-color:var(--g)}
+#mp{height:230px;cursor:crosshair}
+.mh{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(10,32,24,.87);color:#fff;padding:7px 17px;border-radius:100px;font-size:11px;font-weight:600;pointer-events:none;white-space:nowrap;transition:opacity .32s}
+.mh.gn{opacity:0}
+.lf{padding:9px 11px;border-top:1px solid var(--brd);display:flex;gap:7px}
+.bg{flex:1;background:linear-gradient(135deg,var(--blue),#1a48d0);color:#fff;border:none;padding:10px 9px;border-radius:10px;font-family:var(--f);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .17s}
+.bg:disabled{background:#94a3b8;cursor:not-allowed}
+.bg svg{width:13px;height:13px;flex-shrink:0}
+.bcl{background:var(--bg);border:1px solid var(--brd);color:var(--t2);padding:10px 12px;border-radius:10px;font-family:var(--f);font-size:12px;cursor:pointer;display:none}
+.bcl.sh{display:block}
+.li{padding:0 11px 11px;display:none}
+.li.sh{display:block}
+.lib{background:#f0faf6;border:1px solid #a7f3d0;border-radius:8px;padding:9px 11px;font-size:11px;color:#065f46;line-height:1.8}
+.ow{background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:9px 11px;font-size:11px;color:#856404;margin-top:7px;display:none;line-height:1.5}
+.ow.sh{display:block}
+.sp{width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite;display:none;flex-shrink:0}
+.sp.on{display:inline-block}
+@keyframes rot{to{transform:rotate(360deg)}}
+.ia{border:2px dashed var(--brd);border-radius:14px;padding:24px 16px;text-align:center;cursor:pointer;background:#fff;position:relative;overflow:hidden;transition:all .17s}
+.ia:hover{border-color:var(--g);background:var(--gl)}
+.ia input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
+.ta{width:100%;background:#fff;border:2px solid var(--brd);color:var(--t1);padding:12px 14px;border-radius:12px;font-family:var(--f);font-size:13px;outline:none;resize:none;height:95px;line-height:1.6;transition:border-color .2s}
+.ta:focus{border-color:var(--g)}
+.ta::placeholder{color:var(--t3)}
+.inp{width:100%;background:#fff;border:2px solid var(--brd);color:var(--t1);padding:12px 14px;border-radius:12px;font-family:var(--f);font-size:13px;outline:none;transition:border-color .2s}
+.inp:focus{border-color:var(--g)}
+.inp::placeholder{color:var(--t3)}
+.bs{width:100%;background:linear-gradient(135deg,var(--g),var(--g2));color:#fff;border:none;padding:17px;border-radius:13px;font-family:var(--f);font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 7px 22px rgba(0,200,150,.3);margin-top:6px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:9px}
+.bs:disabled{background:#94a3b8;cursor:not-allowed;box-shadow:none}
+.sps{width:17px;height:17px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite;display:none}
+.sps.on{display:inline-block}
+#ss{background:linear-gradient(160deg,#0a2018,#0d3326);align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:36px 24px}
+.sc-c{width:104px;height:104px;border-radius:50%;background:linear-gradient(135deg,var(--g),#009670);display:flex;align-items:center;justify-content:center;margin:0 auto 26px;box-shadow:0 12px 46px rgba(0,200,150,.44);animation:pp .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pp{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.sc-c svg{width:50px;height:50px;color:#fff}
+.sid{display:inline-block;background:rgba(0,200,150,.13);border:1px solid rgba(0,200,150,.26);border-radius:100px;padding:8px 22px;font-size:14px;color:var(--g);font-weight:700;margin-bottom:30px;letter-spacing:.5px}
+.bn{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);color:#fff;padding:13px 24px;border-radius:11px;font-family:var(--f);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:10px;width:100%;max-width:280px;transition:all .2s}
+.bt{background:var(--g);border:none;color:#fff;padding:13px 24px;border-radius:11px;font-family:var(--f);font-size:14px;font-weight:700;cursor:pointer;width:100%;max-width:280px;transition:all .2s}
+#st{background:var(--bg)}
+.tw{padding:16px;max-width:520px;margin:0 auto}
+.ti{width:100%;background:#fff;border:2px solid var(--brd);color:var(--t1);padding:13px 14px;border-radius:12px;font-family:var(--f);font-size:15px;outline:none;text-align:center;letter-spacing:2px;font-weight:700;transition:border-color .2s}
+.ti:focus{border-color:var(--g)}
+.bts{width:100%;background:linear-gradient(135deg,var(--g),var(--g2));color:#fff;border:none;padding:13px;border-radius:11px;font-family:var(--f);font-size:15px;font-weight:700;cursor:pointer;margin-top:8px}
+.stc{background:#fff;border-radius:16px;padding:20px;box-shadow:var(--sh);margin-top:16px;display:none}
+.stc.sh{display:block;animation:fi .28s ease}
+.sh2{display:flex;align-items:flex-start;gap:11px;margin-bottom:16px}
+.stps{position:relative;padding-right:17px}
+.stps::before{content:'';position:absolute;right:4px;top:8px;bottom:8px;width:2px;background:var(--brd)}
+.stp{display:flex;align-items:center;gap:11px;padding:8px 0}
+.sd{width:11px;height:11px;border-radius:50%;border:2px solid var(--brd);background:#fff;z-index:1;flex-shrink:0;order:2;transition:all .28s}
+.sd.dn{background:var(--g);border-color:var(--g);box-shadow:0 0 0 3px var(--gl)}
+.sd.ac{background:var(--amb);border-color:var(--amb);animation:pa 1.5s infinite}
+@keyframes pa{0%,100%{box-shadow:0 0 0 3px rgba(245,158,11,.13)}50%{box-shadow:0 0 0 6px rgba(245,158,11,.06)}}
+.sl2{font-size:13px;font-weight:600;color:var(--t2);order:1;flex:1}
+.sl2.dn{color:var(--t1)}
+.sl2.ac{color:var(--amb)}
+.stm{font-size:10px;color:var(--t3);margin-top:1px}
+.nf{background:#fff;border-radius:12px;padding:24px;text-align:center;margin-top:14px;font-size:13px;color:var(--t3)}
+#ib{display:none;position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#0d3326,#0a4030);padding:14px 18px;z-index:9000;border-top:1px solid rgba(0,200,150,.18)}
+#ib.sh{display:flex;align-items:center;gap:11px}
+.ibi{width:42px;height:42px;background:var(--g);border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:19px}
+.ibt{flex:1;color:#fff}
+.ibt b{font-size:13px;font-weight:700;display:block}
+.ibt small{font-size:10px;color:rgba(255,255,255,.5)}
+.bii{background:var(--g);border:none;color:#fff;padding:8px 16px;border-radius:9px;font-family:var(--f);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.bic{background:transparent;border:none;color:rgba(255,255,255,.35);font-size:19px;cursor:pointer;padding:3px}
+#toast{position:fixed;bottom:76px;right:50%;transform:translateX(50%) translateY(56px);background:#0a2018;color:#fff;padding:11px 20px;border-radius:100px;font-size:12px;font-weight:600;z-index:9999;pointer-events:none;opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);max-width:84vw;text-align:center}
+#toast.sh{transform:translateX(50%) translateY(0);opacity:1}
+#toast.g{background:var(--g)}
+#toast.r{background:var(--red)}
+#ob{display:none;position:fixed;top:0;left:0;right:0;background:#e53935;color:#fff;text-align:center;padding:7px;font-size:11px;font-weight:600;z-index:10000}
+#ob.sh{display:block}
+.ipv{display:none;margin-top:9px;border-radius:11px;overflow:hidden;position:relative}
+.ipv img{width:100%;max-height:180px;object-fit:cover;display:block}
+.irm{position:absolute;top:7px;left:7px;width:26px;height:26px;background:rgba(0,0,0,.6);border-radius:50%;border:none;color:#fff;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+</style>
+</head>
+<body>
+<div id="ob">📵 لا يوجد اتصال — البيانات لن تُرسل</div>
+
+<div class="sc on" id="sh">
+  <div class="rg r1"></div><div class="rg r2"></div>
+  <div class="hero">
+    <div class="bdg"><div class="dl"></div><span>بلدية الثنية — بومرداس</span></div>
+    <div class="lb"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+    <h1 class="ht">أبلغ عن<br><span>مشكل في بلدتك</span></h1>
+    <p class="hs">منصة التبليغ المدني الرقمي لبلدية الثنية.<br>بلّغ، تتبّع، وساهم في تحسين حيّك.</p>
+    <button class="bh" onclick="go('r')">📍 أبلغ عن مشكل الآن</button>
+    <div class="hl" style="margin-top:15px"><span onclick="go('t')">🔍 تتبّع بلاغ سابق</span></div>
+  </div>
+</div>
+
+<div class="sc" id="sr">
+  <div class="tbar">
+    <div class="bk" onclick="go('h')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></div>
+    <div><div class="tt">بلاغ جديد</div><div class="ts">بلدية الثنية — ولاية بومرداس</div></div>
+  </div>
+  <div class="fb">
+    <div class="fs">
+      <div class="fl">نوع المشكل <span class="rq">*</span></div>
+      <div class="cg">
+        <div class="cc" data-cat="road" onclick="selC(this)"><div class="ci">🕳️</div><div class="cn">حفر وطرق</div><div class="cd">حفر، تلف رصيف</div></div>
+        <div class="cc" data-cat="lighting" onclick="selC(this)"><div class="ci">💡</div><div class="cn">إنارة عامة</div><div class="cd">عمود مكسور، منطفئة</div></div>
+        <div class="cc" data-cat="waste" onclick="selC(this)"><div class="ci">🗑️</div><div class="cn">نفايات</div><div class="cd">تراكم، مكب عشوائي</div></div>
+        <div class="cc" data-cat="water" onclick="selC(this)"><div class="ci">💧</div><div class="cn">تسريب مياه</div><div class="cd">قناة مكسورة، شبكة</div></div>
+        <div class="cc" data-cat="sewer" onclick="selC(this)"><div class="ci">🚧</div><div class="cn">صرف صحي</div><div class="cd">انسداد، فيضان</div></div>
+        <div class="cc" data-cat="other" onclick="selC(this)"><div class="ci">⚠️</div><div class="cn">أخرى</div><div class="cd">مشكل آخر</div></div>
+      </div>
+    </div>
+
+    <div class="fs">
+      <div class="fl">📍 تحديد الموقع <span class="rq">*</span></div>
+      <div class="lc" id="lc">
+        <div style="position:relative">
+          <div id="mp"></div>
+          <div class="mh" id="mh">انقر على الخريطة لتحديد مكان المشكل</div>
+        </div>
+        <div class="lf">
+          <button class="bg" id="bgb" onclick="tryGPS()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+            <div class="sp" id="gsp"></div><span id="gtt">📡 استخدم GPS</span>
+          </button>
+          <button class="bcl" id="bcl" onclick="clrLoc()">✕ إعادة</button>
+        </div>
+        <div class="li" id="li">
+          <div class="lib" id="lib"></div>
+          <div class="ow" id="ow">⚠️ الموقع خارج حدود بلدية الثنية.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fs">
+      <div class="fl">صورة المشكل <span class="op">(اختياري — أقصى 2MB)</span></div>
+      <div class="ia" id="ia"><input type="file" id="ii" accept="image/*" onchange="hdlImg(this)"/>
+        <div style="font-size:28px;margin-bottom:6px">📷</div>
+        <div style="font-size:12px;color:var(--t2);font-weight:500">انقر لاختيار صورة</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:3px">JPG, PNG</div>
+      </div>
+      <div class="ipv" id="ipv"><img id="ip" src="" alt=""/><button class="irm" onclick="rmImg()">✕</button></div>
+    </div>
+
+    <div class="fs">
+      <div class="fl">وصف المشكل <span class="op">(اختياري)</span></div>
+      <textarea class="ta" id="cmt" placeholder="أضف تفاصيل تساعد في معالجة المشكل…" maxlength="300" oninput="document.getElementById('cc').textContent=this.value.length+' / 300'"></textarea>
+      <div style="font-size:10px;color:var(--t3);text-align:left;margin-top:4px" id="cc">0 / 300</div>
+    </div>
+
+    <div class="fs">
+      <div class="fl">رقم الهاتف <span class="op">(اختياري)</span></div>
+      <input class="inp" id="ph" type="tel" placeholder="0XXXXXXXXX" maxlength="10"/>
+    </div>
+
+    <button class="bs" id="bsb" onclick="submit()">
+      <div class="sps" id="sbsp"></div><span id="sbtx">إرسال البلاغ ✓</span>
+    </button>
+  </div>
+</div>
+
+<div class="sc" id="ss">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:36px 24px;text-align:center">
+    <div class="sc-c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <div style="font-size:25px;font-weight:900;color:#fff;margin-bottom:9px">تم استقبال بلاغك!</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.48);line-height:1.7;margin-bottom:9px">سيتم مراجعته من قِبل إدارة البلدية<br>والرد في أقرب وقت ممكن.</div>
+    <div class="sid" id="sid">رقم البلاغ: —</div>
+    <button class="bn" onclick="go('r')">📍 إرسال بلاغ جديد</button><br/><br/>
+    <button class="bt" onclick="go('t')">🔍 تتبّع هذا البلاغ</button>
+  </div>
+</div>
+
+<div class="sc" id="st">
+  <div class="tbar">
+    <div class="bk" onclick="go('h')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></div>
+    <div><div class="tt">تتبّع بلاغ</div><div class="ts">أدخل رقم البلاغ</div></div>
+  </div>
+  <div class="tw">
+    <input class="ti" id="tid" type="text" placeholder="TH-2025-0001" maxlength="16"
+      oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')srch()"/>
+    <button class="bts" onclick="srch()">🔍 بحث</button>
+    <div id="tr"></div>
+  </div>
+</div>
+
+<div id="ib">
+  <div class="ibi">📍</div>
+  <div class="ibt"><b>ثبّت التطبيق</b><small>أضفه للشاشة الرئيسية</small></div>
+  <button class="bii" id="bii">تثبيت</button>
+  <button class="bic" onclick="clsB()">✕</button>
+</div>
+<div id="toast"></div>
+
+<script>
+const SB='https://bwaublcpiqtdggnzwbgj.supabase.co';
+const SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3YXVibGNwaXF0ZGdnbnp3YmdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5Mjk1MzcsImV4cCI6MjA5MTUwNTUzN30.ha6KdvlmRwQ4Iw59BE2ioa23ATaCQ-dQ5vK7VvWgCT8';
+const SH={'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':'application/json','Prefer':'return=minimal'};
+
+async function sbAdd(d){const r=await fetch(SB+'/rest/v1/reports',{method:'POST',headers:SH,body:JSON.stringify(d)});if(!r.ok)throw new Error(await r.text());}
+async function sbGet(id){const r=await fetch(SB+'/rest/v1/reports?id=eq.'+encodeURIComponent(id)+'&select=*',{headers:{'apikey':SK,'Authorization':'Bearer '+SK}});if(!r.ok)throw new Error();const d=await r.json();return d[0]||null;}
+
+const TC=[36.7220,3.5580];
+const TP=[[36.670,3.490],[36.682,3.500],[36.693,3.506],[36.703,3.512],[36.714,3.522],[36.724,3.533],[36.735,3.544],[36.748,3.557],[36.762,3.571],[36.776,3.586],[36.787,3.601],[36.791,3.622],[36.786,3.641],[36.776,3.649],[36.760,3.651],[36.740,3.646],[36.720,3.636],[36.700,3.626],[36.680,3.616],[36.670,3.601],[36.664,3.576],[36.662,3.546],[36.664,3.516],[36.670,3.490]];
+function inT(la,ln){let i=false;for(let a=0,b=TP.length-1;a<TP.length;b=a++){const[xi,yi]=TP[a],[xj,yj]=TP[b];if(((yi>ln)!==(yj>ln))&&(la<(xj-xi)*(ln-yi)/(yj-yi)+xi))i=!i;}return i;}
+
+const CL={road:'حفر وطرق',lighting:'إنارة عامة',waste:'نفايات',water:'تسريب مياه',sewer:'صرف صحي',other:'أخرى'};
+const CI={road:'🕳️',lighting:'💡',waste:'🗑️',water:'💧',sewer:'🚧',other:'⚠️'};
+const SL={pending:'في انتظار المراجعة',reviewing:'قيد الدراسة',processing:'جاري المعالجة',resolved:'تم الإصلاح ✓'};
+const SS=['pending','reviewing','processing','resolved'];
+
+let cat=null,loc=null,img=null,lid=null,pmap=null,pin=null,mr=false;
+
+function go(s){
+  document.querySelectorAll('.sc').forEach(x=>x.classList.remove('on'));
+  const ids={h:'sh',r:'sr',s:'ss',t:'st'};
+  document.getElementById(ids[s]).classList.add('on');
+  window.scrollTo(0,0);
+  if(s==='r'&&!mr)setTimeout(imap,80);
+  if(s==='t'&&lid){document.getElementById('tid').value=lid;srch();}
+}
+
+function imap(){
+  if(mr)return;mr=true;
+  pmap=L.map('mp',{center:TC,zoom:14,zoomControl:true,attributionControl:false});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(pmap);
+  L.polygon(TP,{color:'#00c896',weight:2,fillColor:'#00c896',fillOpacity:.06,dashArray:'6,4'}).addTo(pmap);
+  pmap.on('click',e=>placePin(e.latlng.lat,e.latlng.lng,'map'));
+}
+
+function placePin(la,ln,src){
+  if(pin){pmap.removeLayer(pin);pin=null;}
+  const ok=inT(la,ln);
+  pin=L.marker([la,ln],{icon:L.divIcon({className:'',html:`<div style="width:24px;height:24px;background:${ok?'#00c896':'#e53935'};border:3px solid #fff;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 3px 10px rgba(0,0,0,.3)"></div>`,iconSize:[24,24],iconAnchor:[12,24]})}).addTo(pmap);
+  if(ok){
+    loc={lat:la,lng:ln,src};
+    document.getElementById('lc').classList.add('ok');
+    document.getElementById('li').classList.add('sh');
+    document.getElementById('ow').classList.remove('sh');
+    document.getElementById('lib').innerHTML=`✅ تم تحديد الموقع ${src==='gps'?'بـ GPS':'يدوياً'}<br>خط العرض: <b>${la.toFixed(5)}</b> | خط الطول: <b>${ln.toFixed(5)}</b>`;
+    document.getElementById('mh').classList.add('gn');
+    document.getElementById('bcl').classList.add('sh');
+    toast('✅ تم تحديد الموقع','g');
+  }else{
+    loc=null;
+    document.getElementById('lc').classList.remove('ok');
+    document.getElementById('li').classList.add('sh');
+    document.getElementById('ow').classList.add('sh');
+    document.getElementById('lib').innerHTML=`📍 ${la.toFixed(5)}, ${ln.toFixed(5)}`;
+    toast('⚠️ خارج حدود البلدية','r');
+  }
+  pmap.panTo([la,ln]);
+}
+
+function clrLoc(){
+  if(pin){pmap.removeLayer(pin);pin=null;}
+  loc=null;
+  document.getElementById('lc').classList.remove('ok');
+  document.getElementById('li').classList.remove('sh');
+  document.getElementById('ow').classList.remove('sh');
+  document.getElementById('mh').classList.remove('gn');
+  document.getElementById('bcl').classList.remove('sh');
+  pmap.setView(TC,14);
+}
+
+function tryGPS(){
+  if(!navigator.geolocation){toast('انقر على الخريطة مباشرة','r');return;}
+  const b=document.getElementById('bgb'),sp=document.getElementById('gsp'),t=document.getElementById('gtt');
+  b.disabled=true;sp.classList.add('on');t.textContent='جاري…';
+  navigator.geolocation.getCurrentPosition(
+    p=>{b.disabled=false;sp.classList.remove('on');t.textContent='📡 استخدم GPS';placePin(p.coords.latitude,p.coords.longitude,'gps');},
+    _=>{b.disabled=false;sp.classList.remove('on');t.textContent='📡 استخدم GPS';toast('تعذّر GPS — انقر على الخريطة','r');},
+    {enableHighAccuracy:true,timeout:10000,maximumAge:0}
+  );
+}
+
+function selC(el){document.querySelectorAll('.cc').forEach(c=>c.classList.remove('sl'));el.classList.add('sl');cat=el.dataset.cat;}
+
+function hdlImg(inp){
+  const f=inp.files[0];if(!f)return;
+  if(f.size>2*1024*1024){toast('❌ الصورة أكبر من 2MB','r');return;}
+  const rd=new FileReader();
+  rd.onload=e=>{img=e.target.result;document.getElementById('ip').src=img;document.getElementById('ipv').style.display='block';document.getElementById('ia').style.display='none';toast('✅ تم اختيار الصورة','g');};
+  rd.readAsDataURL(f);
+}
+function rmImg(){img=null;document.getElementById('ii').value='';document.getElementById('ipv').style.display='none';document.getElementById('ia').style.display='block';}
+
+async function submit(){
+  if(!cat){toast('❌ اختر نوع المشكل','r');return;}
+  if(!loc){toast('❌ حدد الموقع على الخريطة','r');return;}
+  if(!navigator.onLine){toast('❌ لا يوجد اتصال','r');return;}
+  const btn=document.getElementById('bsb'),sp=document.getElementById('sbsp'),tx=document.getElementById('sbtx');
+  btn.disabled=true;sp.classList.add('on');tx.textContent='جاري الإرسال…';
+  const now=new Date().toISOString();
+  const id=`TH-${new Date().getFullYear()}-${Math.floor(Math.random()*9000)+1000}`;
+  try{
+    await sbAdd({id,category:cat,category_label:CL[cat],category_icon:CI[cat],lat:loc.lat,lng:loc.lng,loc_source:loc.src,comment:document.getElementById('cmt').value.trim()||null,phone:document.getElementById('ph').value.trim()||null,image:img||null,status:'pending',status_history:JSON.stringify([{status:'pending',time:now}]),admin_reply:null,created_at:now});
+    lid=id;document.getElementById('sid').textContent='رقم البلاغ: '+id;
+    cat=null;loc=null;img=null;
+    document.querySelectorAll('.cc').forEach(c=>c.classList.remove('sl'));
+    document.getElementById('cmt').value='';document.getElementById('ph').value='';document.getElementById('cc').textContent='0 / 300';
+    rmImg();clrLoc();go('s');
+  }catch(e){toast('❌ فشل الإرسال — تحقق من الاتصال','r');console.error(e);}
+  finally{btn.disabled=false;sp.classList.remove('on');tx.textContent='إرسال البلاغ ✓';}
+}
+
+async function srch(){
+  const id=document.getElementById('tid').value.trim().toUpperCase();
+  const c=document.getElementById('tr');
+  if(!id){toast('أدخل رقم البلاغ','r');return;}
+  c.innerHTML='<div class="nf">⏳ جاري البحث…</div>';
+  try{
+    const r=await sbGet(id);
+    if(!r){c.innerHTML='<div class="nf">❌ لم يُعثر على بلاغ بهذا الرقم.</div>';return;}
+    let h=r.status_history;if(typeof h==='string')try{h=JSON.parse(h);}catch{h=[];}h=h||[];
+    const si=SS.indexOf(r.status);
+    const stps=SS.map((s,i)=>{
+      const dn=i<si,ac=i===si;
+      const te=h.find(x=>x.status===s);
+      const ts=te?new Date(te.time).toLocaleString('ar-DZ'):'';
+      return `<div class="stp"><div style="flex:1;order:1"><div class="sl2 ${dn?'dn':ac?'ac':''}">${SL[s]}</div>${ts?`<div class="stm">${ts}</div>`:''}</div><div class="sd ${dn?'dn':ac?'ac':''}" style="order:2"></div></div>`;
+    }).join('');
+    c.innerHTML=`<div class="stc sh"><div class="sh2"><div style="font-size:32px;line-height:1">${r.category_icon}</div><div style="flex:1"><div style="font-size:10px;color:var(--t3);font-weight:600;letter-spacing:1.5px;margin-bottom:2px">رقم البلاغ: ${r.id}</div><div style="font-size:16px;font-weight:800">${r.category_label}</div><div style="font-size:11px;color:var(--t3);margin-top:1px">${new Date(r.created_at).toLocaleString('ar-DZ')}</div></div></div><div class="stps">${stps}</div>${r.comment?`<div style="margin-top:10px;padding:10px 12px;background:var(--bg);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.6">📝 ${r.comment}</div>`:''}${r.image?`<div style="margin-top:12px;border-radius:10px;overflow:hidden"><img src="${r.image}" style="width:100%;max-height:160px;object-fit:cover;display:block"/></div>`:''}${r.admin_reply?`<div style="margin-top:10px;padding:10px 12px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;font-size:12px;color:#0369a1;line-height:1.6"><b>💬 رد الإدارة: </b>${r.admin_reply}</div>`:''}</div>`;
+  }catch(e){c.innerHTML='<div class="nf">❌ تعذّر الاتصال. تحقق من الإنترنت.</div>';}
+}
+
+let _tt=null;
+function toast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='sh '+(type||'');clearTimeout(_tt);_tt=setTimeout(()=>{t.className='';},3400);}
+
+window.addEventListener('online',()=>document.getElementById('ob').classList.remove('sh'));
+window.addEventListener('offline',()=>document.getElementById('ob').classList.add('sh'));
+if(!navigator.onLine)document.getElementById('ob').classList.add('sh');
+
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+
+let dp=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;if(!localStorage.getItem('pwa-no'))setTimeout(()=>document.getElementById('ib').classList.add('sh'),1800);});
+document.getElementById('bii').addEventListener('click',async()=>{if(!dp)return;dp.prompt();await dp.userChoice;dp=null;document.getElementById('ib').classList.remove('sh');});
+function clsB(){document.getElementById('ib').classList.remove('sh');localStorage.setItem('pwa-no','1');}
+window.addEventListener('appinstalled',()=>{document.getElementById('ib').classList.remove('sh');toast('✅ تم تثبيت التطبيق!','g');});
+</script>
+</body>
+</html>

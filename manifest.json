@@ -1,0 +1,37 @@
+{
+  "name": "بلّغ — بلدية الثنية",
+  "short_name": "بلّغ",
+  "description": "منصة التبليغ المدني لبلدية الثنية - بومرداس",
+  "start_url": "./citizen.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d2b22",
+  "theme_color": "#00c896",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%2300c896'/%3E%3Cpath d='M96 40c-22 0-40 18-40 40 0 30 40 72 40 72s40-42 40-72c0-22-18-40-40-40z' fill='white'/%3E%3Ccircle cx='96' cy='80' r='14' fill='%2300c896'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%2300c896'/%3E%3Cpath d='M256 100c-60 0-108 48-108 108 0 80 108 204 108 204s108-124 108-204c0-60-48-108-108-108z' fill='white'/%3E%3Ccircle cx='256' cy='208' r='38' fill='%2300c896'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["utilities", "government"],
+  "shortcuts": [
+    {
+      "name": "بلاغ جديد",
+      "url": "./citizen.html#report",
+      "description": "إرسال بلاغ جديد"
+    },
+    {
+      "name": "تتبع بلاغ",
+      "url": "./citizen.html#track",
+      "description": "تتبع بلاغ سابق"
+    }
+  ]
+}
